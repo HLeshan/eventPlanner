@@ -49,6 +49,6 @@ describe('login page', () => {
         const loginButton = loginPage.getByTestId('loginButton');
         fireEvent.press(loginButton);
 
-        expect(usernameField.style.borderColor).toBe('#FF4949');
+        expect(usernameField.style.borderBottomColor).toBe('#FF4949');
     });
 });
