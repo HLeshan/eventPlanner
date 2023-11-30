@@ -2,7 +2,11 @@
 export const isDEV_ = true;
 
 export const APP_SETTINGS = {
-    DEFAULT: 'eventPlanner_default',
+    DEFAULT_CHANNEL: 'eventPlanner_default',
+};
+
+export const STORAGE_KEYS = {
+    FCM_TOKEN: '@fcmToken',
 };
 
 export const VALIDATIONS = {

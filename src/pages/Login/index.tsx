@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {Image, Text, View} from 'react-native';
 import {Form} from 'react-final-form';
 import {combine, email, required} from 'redux-form-validators';
@@ -17,6 +17,7 @@ import useAppSettings from '~/models/AppSettings';
 import useAuthStore from '~/models/AuthStore';
 import {ROUTES} from '~/routes/types';
 import styles from './styles';
+import {checkNotificationPermission, getNotificationToken, onNotificationMessage} from '~/utils/FCMEvents';
 import {logInfo} from '~/utils/Logger';
 import {navigate} from '~/utils/NavigationService';
 
@@ -28,6 +29,22 @@ type AuthPayload = {
 export default function LoginPage() {
     const theme = useAppSettings(state => state.theme);
     const setUserData = useAuthStore(state => state.setUserData);
+
+    useEffect(() => {
+        async function checkPermission() {
+            const permissionEnabled = await checkNotificationPermission();
+            if (permissionEnabled) {
+                await getNotificationToken();
+            }
+        }
+
+        checkPermission();
+        const unsubscribe = onNotificationMessage();
+
+        return () => {
+            unsubscribe;
+        };
+    }, []);
 
     const onSubmit = async (values: AuthPayload) => {
         logInfo(values);
