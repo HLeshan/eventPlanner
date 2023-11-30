@@ -31,7 +31,7 @@ npx react-native run-ios
 
 # When Releasing the application
 
-set following variable to false to disable logs and to disable other debug conditions
+Set the following variable to false to disable logs and other debug conditions.
 
 ```bash
 # src/constants/index.tsx

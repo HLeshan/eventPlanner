@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react';
-import {Image, Text, View} from 'react-native';
+import {Image, LogBox, Text, View} from 'react-native';
 import {Form} from 'react-final-form';
 import {combine, email, required} from 'redux-form-validators';
 
@@ -34,7 +34,7 @@ export default function LoginPage() {
                 await getNotificationToken();
             }
         }
-
+        LogBox.ignoreLogs(['']);
         checkPermission();
         const unsubscribe = onNotificationMessage();
 
@@ -67,8 +67,16 @@ export default function LoginPage() {
                                     keyboardType={'email-address'}
                                     autoCapitalize={'none'}
                                     leftIcon={MailIcon}
+                                    testID={'usernameField'}
                                 />
-                                <TextInputField name={'password'} label={'Password'} password validate={required()} leftIcon={LockIcon} />
+                                <TextInputField
+                                    name={'password'}
+                                    label={'Password'}
+                                    password
+                                    validate={required()}
+                                    leftIcon={LockIcon}
+                                    testID={'passwordField'}
+                                />
                                 <View style={styles().restorePwContainer}>
                                     <Text style={styles(theme).restoreText}>Restore Password</Text>
                                     <Image style={styles(theme).restoreIcon} source={RightTopIcon} />
@@ -76,8 +84,8 @@ export default function LoginPage() {
                             </View>
                         </View>
                         <View style={styles().buttonContainer}>
-                            <Button onPress={handleSubmit} title={'Login'} rightIcon={RightArrowIcon} />
-                            <Button onPress={() => navigate(ROUTES.SIGN_UP)} title={'Sign Up'} rightIcon={RightArrowIcon} />
+                            <Button testID={'loginButton'} onPress={handleSubmit} title={'Login'} rightIcon={RightArrowIcon} />
+                            <Button testID={'signUpButton'} onPress={() => navigate(ROUTES.SIGN_UP)} title={'Sign Up'} rightIcon={RightArrowIcon} />
                         </View>
                     </>
                 )}
