@@ -19,6 +19,7 @@ import ImageUploadPage from '~/pages/dashboard/ImageUpload';
 import PersonalInfoPage from '~/pages/dashboard/PersonalInfo';
 import ProfilePage from '~/pages/dashboard/Profile';
 import HomePage from '~/pages/dashboard/Home';
+import PostsPage from '~/pages/dashboard/Posts';
 
 const theme = useAppSettings.getState().theme;
 const Stack = createStackNavigator<RootStackParamList>();
@@ -51,6 +52,7 @@ export const DrawerNavigator = () => {
     return (
         <Drawer.Navigator screenOptions={drawerOptions} drawerContent={CustomDrawer}>
             <Drawer.Screen name={ROUTES.DASHBOARD_DRAWER} component={DashboardTabs} />
+            <Drawer.Screen name={ROUTES.POSTS} component={PostsPage} />
         </Drawer.Navigator>
     );
 };

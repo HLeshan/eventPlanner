@@ -10,6 +10,7 @@ export enum ROUTES {
     DASHBOARD_DRAWER = 'dashboard_drawer',
     HOME = 'home',
     PROFILE = 'profile',
+    POSTS = 'posts',
 }
 
 export type RootStackParamList = {
@@ -31,4 +32,5 @@ export type DashboardStackParamList = {
 
 export type DrawerStackParamList = {
     [ROUTES.DASHBOARD_DRAWER]: NavigatorScreenParams<DashboardStackParamList>;
+    [ROUTES.POSTS]: undefined;
 };

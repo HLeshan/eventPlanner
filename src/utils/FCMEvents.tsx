@@ -5,7 +5,9 @@ import {isEmulatorSync} from 'react-native-device-info';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import isNil from 'lodash/isNil';
 import isNull from 'lodash/isNull';
+import replace from 'lodash/replace';
 import split from 'lodash/split';
+import startCase from 'lodash/startCase';
 
 import {setAlertModal} from '.';
 import {ALERT} from '~/components/modals/AlertModal';
@@ -138,7 +140,7 @@ export async function createUserAccount(email: string, password: string) {
     } catch (error: any) {
         hideLoading();
         logInfo('createUserAccount error', error);
-        useModalControllers.getState().showAlertModal(setAlertModal(ALERT.error, 'Error', error.code));
+        useModalControllers.getState().showAlertModal(setAlertModal(ALERT.error, 'Error', getErrorMessage(error.code)));
     }
 }
 
@@ -153,8 +155,12 @@ export async function userSignIn(email: string, password: string) {
     } catch (error: any) {
         hideLoading();
         logInfo('userSignIn error', error);
-        useModalControllers.getState().showAlertModal(setAlertModal(ALERT.error, 'Error', error.code));
+        useModalControllers.getState().showAlertModal(setAlertModal(ALERT.error, 'Error', getErrorMessage(error.code)));
     }
+}
+
+function getErrorMessage(error: string) {
+    return startCase(replace(error, 'auth/', ''));
 }
 
 export async function userSignOut() {

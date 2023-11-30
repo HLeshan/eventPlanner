@@ -1,6 +1,6 @@
 import {StyleSheet} from 'react-native';
-import {DEFAULT_APP_STYLES} from '~/assets/styles';
 
+import {DEFAULT_APP_STYLES} from '~/assets/styles';
 import APP_THEMES, {THEMES} from '~/assets/styles/Colors';
 import {CustomFont, normalizeFont} from '~/assets/styles/CustomFonts';
 import {DEVICE} from '~/utils/DeviceUtils';

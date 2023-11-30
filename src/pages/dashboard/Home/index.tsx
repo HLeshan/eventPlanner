@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {ActivityIndicator, FlatList, Image, ScrollView, Text, View} from 'react-native';
 import Carousel from 'react-native-reanimated-carousel';
 import isEmpty from 'lodash/isEmpty';
@@ -13,10 +13,12 @@ import H2 from '~/components/headings/H2';
 import Touchable from '~/components/clickable/Touchable';
 import useAppSettings from '~/models/AppSettings';
 import useDashboardStore from '~/models/DashboardStore';
+import {ROUTES} from '~/routes/types';
 import {getBanners, getEvents, getPhotos, getPosts} from '~/services/dashboardService';
 import styles from './styles';
 import {getAddressString} from '~/utils';
 import {DEVICE} from '~/utils/DeviceUtils';
+import {navigate} from '~/utils/NavigationService';
 
 import type {Photo} from '~/services/dashboardService';
 
@@ -52,6 +54,8 @@ export default function HomePage() {
             setPhotos(response);
         }
     };
+
+    const FlatLstItemSeparator = useCallback(() => <View style={styles(theme).orgSeparator} />, [theme]);
 
     return (
         <ScrollView contentContainerStyle={styles().pageContainer}>
@@ -89,7 +93,7 @@ export default function HomePage() {
                             <FlatList
                                 data={take(events, 3)}
                                 scrollEnabled={false}
-                                ItemSeparatorComponent={() => <View style={styles(theme).orgSeparator} />}
+                                ItemSeparatorComponent={FlatLstItemSeparator}
                                 renderItem={({item}) => (
                                     <View style={styles().orgItemWrapper}>
                                         <Image source={DefaultProfile} style={styles().orgItemImage} />
@@ -143,7 +147,7 @@ export default function HomePage() {
                 )}
             </View>
 
-            <Touchable style={styles(theme).postsSection} disabled={postsCount === 0}>
+            <Touchable style={styles(theme).postsSection} disabled={postsCount === 0} onPress={() => navigate(ROUTES.POSTS)}>
                 {postsCount !== 0 ? (
                     <>
                         <Text style={styles(theme).postCountText}>{postsCount}</Text>

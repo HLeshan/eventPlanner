@@ -98,6 +98,6 @@ export type Comment = {
     body: string;
 };
 
-export const getComments = async () => {
-    return (await AxiosInstance.get('comments')) as Comment[];
+export const getComments = async (postId: number) => {
+    return (await AxiosInstance.get('comments', {params: {postId}})) as Comment[];
 };
