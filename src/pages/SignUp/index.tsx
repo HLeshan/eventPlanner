@@ -14,14 +14,18 @@ import H2 from '~/components/headings/H2';
 import PageContainer from '~/components/PageContainer';
 import {ROUTES} from '~/routes/types';
 import styles from './styles';
-import {logInfo} from '~/utils/Logger';
 import {navigate} from '~/utils/NavigationService';
+import {createUserAccount} from '~/utils/FCMEvents';
 
-import type {AuthPayload} from '~/services/authService';
+type SignUpPayload = {
+    username: string;
+    password: string;
+    confirmPassword: string;
+};
 
 export default function SignUpPage() {
-    const onSubmit = async (values: AuthPayload) => {
-        logInfo(values);
+    const onSubmit = async (values: SignUpPayload) => {
+        await createUserAccount(values.username, values.confirmPassword);
     };
 
     return (

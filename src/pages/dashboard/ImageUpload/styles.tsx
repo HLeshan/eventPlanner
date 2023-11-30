@@ -37,6 +37,13 @@ const styles = (theme = THEMES.DEFAULT) =>
             resizeMode: 'contain',
             tintColor: APP_THEMES[theme].primary,
         },
+        profileImage: {
+            width: 116,
+            height: 116,
+            borderRadius: 58,
+            resizeMode: 'contain',
+            alignSelf: 'center',
+        },
         buttonContainer: {
             marginVertical: DEFAULT_APP_STYLES.PADDING * 2,
         },

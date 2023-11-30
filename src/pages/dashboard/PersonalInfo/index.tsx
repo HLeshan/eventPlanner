@@ -16,17 +16,21 @@ import useAuthStore from '~/models/AuthStore';
 import {ROUTES} from '~/routes/types';
 import styles from './styles';
 import {normalizePhone} from '~/utils';
-import {logInfo} from '~/utils/Logger';
-import {navigate, navigationGoBack} from '~/utils/NavigationService';
+import {updateProfileData} from '~/utils/FCMEvents';
+import {navigationGoBack, navigationReset} from '~/utils/NavigationService';
 
 import type {UserData} from '~/models/AuthStore';
 
 export default function PersonalInfoPage() {
     const userData = useAuthStore(state => state.userData);
+    const setUserData = useAuthStore(state => state.setUserData);
 
     const onSubmit = async (values: UserData) => {
-        logInfo(values);
-        navigate(ROUTES.DASHBOARD);
+        const response = await updateProfileData(values);
+        if (response) {
+            setUserData(values);
+            navigationReset(ROUTES.DASHBOARD);
+        }
     };
 
     return (
@@ -35,32 +39,31 @@ export default function PersonalInfoPage() {
                 initialValues={userData}
                 onSubmit={onSubmit}
                 render={({handleSubmit}) => (
-                    <>
-                        <View style={styles.formContainer}>
-                            <H1 label={'Personal info'} textStyle={styles.headingText} />
-                            <H2 label={'You can add your personal data now or do it later'} />
+                    <View style={styles.formContainer}>
+                        <H1 label={'Personal info'} textStyle={styles.headingText} />
+                        <H2 label={'You can add your personal data now or do it later'} />
 
-                            <TextInputField name={'firstName'} label={'First Name'} validate={required()} />
-                            <TextInputField name={'lastName'} label={'Last Name'} validate={required()} />
-                            <TextInputField
-                                name={'email'}
-                                label={'Email'}
-                                validate={combine(required(), email())}
-                                keyboardType={'email-address'}
-                                autoCapitalize={'none'}
-                            />
-                            <TextInputField
-                                name={'mobile'}
-                                label={'Mobile'}
-                                placeholder={'12 3456 7890'}
-                                validate={combine(required(), format(VALIDATIONS.PHONE_NO))}
-                                keyboardType={'phone-pad'}
-                                maxLength={12}
-                                parse={normalizePhone}
-                            />
+                        <TextInputField name={'firstName'} label={'First Name'} validate={required()} />
+                        <TextInputField name={'lastName'} label={'Last Name'} validate={required()} />
+                        <TextInputField
+                            name={'email'}
+                            label={'Email'}
+                            validate={combine(required(), email())}
+                            keyboardType={'email-address'}
+                            autoCapitalize={'none'}
+                        />
+                        <TextInputField
+                            name={'mobile'}
+                            label={'Mobile'}
+                            placeholder={'12 3456 7890'}
+                            validate={combine(required(), format(VALIDATIONS.PHONE_NO))}
+                            keyboardType={'phone-pad'}
+                            maxLength={12}
+                            parse={normalizePhone}
+                        />
 
-                            <TextInputField name={'address'} label={'Mailing address'} validate={required()} />
-                        </View>
+                        <TextInputField name={'address'} label={'Mailing address'} validate={required()} />
+
                         <View style={styles.buttonContainer}>
                             <Button
                                 isSecondary
@@ -71,7 +74,7 @@ export default function PersonalInfoPage() {
                             />
                             <Button onPress={handleSubmit} title={'Next'} rightIcon={RightArrowIcon} containerStyle={styles.buttonWrapper} />
                         </View>
-                    </>
+                    </View>
                 )}
             />
         </PageContainer>

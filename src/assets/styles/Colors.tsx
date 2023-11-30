@@ -57,7 +57,7 @@ const APP_THEMES = {
 
         background: BASIC_COLORS.white,
 
-        transparentOverlay: 'rgba(50,50, 50,0.5)',
+        transparentOverlay: 'rgba(0,0,0,0.7)',
     },
     [THEMES.DARK]: {
         ...BASIC_COLORS,

@@ -1,7 +1,9 @@
 import React, {useRef, useState} from 'react';
 import {Image, View} from 'react-native';
+import {DrawerActions} from '@react-navigation/native';
 import {Form} from 'react-final-form';
 import {combine, email, format, required} from 'redux-form-validators';
+import isNull from 'lodash/isNull';
 
 import RightArrowIcon from '~/assets/images/icons/left_arrow.png';
 import CameraIcon from '~/assets/images/icons/camera.png';
@@ -10,30 +12,45 @@ import Button from '~/components/clickable/Button';
 import Touchable from '~/components/clickable/Touchable';
 import H1 from '~/components/headings/H1';
 import TextInputField from '~/components/formComponents/TextBox';
+import {ALERT} from '~/components/modals/AlertModal';
 import PageContainer from '~/components/PageContainer';
 import {VALIDATIONS} from '~/constants';
 import useAppSettings from '~/models/AppSettings';
 import useAuthStore from '~/models/AuthStore';
+import useModalControllers from '~/models/ModalControllers';
 import styles from './styles';
-import {normalizePhone} from '~/utils';
-import {logInfo} from '~/utils/Logger';
+import {normalizePhone, setAlertModal} from '~/utils';
+import {updateProfileData} from '~/utils/FCMEvents';
 
 import type {FormApi} from 'final-form';
+import type {StackScreenProps} from '@react-navigation/stack';
 import type {UserData} from '~/models/AuthStore';
+import type {DashboardStackParamList} from '~/routes/types';
 
-export default function ProfilePage() {
+export default function ProfilePage({navigation}: StackScreenProps<DashboardStackParamList>) {
     const theme = useAppSettings(state => state.theme);
     const userData = useAuthStore(state => state.userData);
+    const setUserData = useAuthStore(state => state.setUserData);
+    const showAlertModal = useModalControllers(state => state.showAlertModal);
 
     const [updateForm, setUpdateForm] = useState(false);
+    const [uploadImage, setUploadImage] = useState<string | null>(null);
     const formRef = useRef<FormApi<UserData> | null>(null);
 
     const onSubmit = async (values: UserData) => {
-        logInfo(values);
-        // const response = await initiateServiceCall(saveRecordService(values), setDefaultAlertBox);
-        // if (response.code === 1000) {
-        //     setDefaultAlertBox(ALERT.success, 'Success', response.status, () => formRef.current?.restart());
-        // }
+        if (!isNull(uploadImage)) {
+            values.profile = uploadImage;
+        }
+
+        const response = await updateProfileData(values);
+        if (response) {
+            showAlertModal(setAlertModal(ALERT.success, 'Profile Update Success', 'Successfully updated profile data', () => setUpdateForm(false)));
+            setUserData(values);
+        }
+    };
+
+    const setTmpImage = () => {
+        setUploadImage('https://static.vecteezy.com/system/resources/thumbnails/004/819/319/small/cartoon-avatar-of-smiling-beard-man-profile-icon-vector.jpg');
     };
 
     return (
@@ -45,7 +62,9 @@ export default function ProfilePage() {
                             <Image source={RightArrowIcon} style={styles(theme).undoIcon} />
                         </Touchable>
                     ) : (
-                        <Image source={{uri: userData?.profile}} style={styles().headerProfileImage} />
+                        <Touchable onPress={() => navigation.dispatch(DrawerActions.openDrawer())}>
+                            <Image source={{uri: userData?.profile}} style={styles().headerProfileImage} />
+                        </Touchable>
                     )}
                 </View>
                 <View style={styles().headerDefault}>
@@ -57,13 +76,17 @@ export default function ProfilePage() {
             <Form
                 onSubmit={onSubmit}
                 initialValues={userData}
-                render={({form, handleSubmit}) => {
+                render={({form, pristine, submitting, handleSubmit}) => {
                     formRef.current = form;
                     return (
                         <View style={styles().formContainer}>
-                            <Touchable disabled={!updateForm}>
+                            <Touchable disabled={!updateForm} onPress={setTmpImage}>
                                 <View style={styles().profileImageContainer}>
-                                    <Image source={{uri: userData?.profile}} style={styles().profileImage} />
+                                    {!isNull(uploadImage) ? (
+                                        <Image source={{uri: uploadImage}} style={styles().profileImage} />
+                                    ) : (
+                                        <Image source={{uri: userData?.profile}} style={styles().profileImage} />
+                                    )}
                                     {updateForm && <Image source={CameraIcon} style={styles(theme).cameraIcon} />}
                                 </View>
                             </Touchable>
@@ -81,7 +104,7 @@ export default function ProfilePage() {
                             <TextInputField
                                 name={'mobile'}
                                 label={'Mobile'}
-                                placeholder={'123-456-7890'}
+                                placeholder={'12 3456 7890'}
                                 validate={combine(required(), format(VALIDATIONS.PHONE_NO))}
                                 keyboardType={'phone-pad'}
                                 maxLength={12}
@@ -91,7 +114,11 @@ export default function ProfilePage() {
 
                             <TextInputField name={'address'} label={'Mailing address'} validate={required()} editable={updateForm} />
 
-                            {updateForm ? <Button onPress={handleSubmit} title={'Save'} /> : <Button onPress={() => setUpdateForm(true)} title={'Edit'} />}
+                            {updateForm ? (
+                                <Button onPress={handleSubmit} disabled={submitting || pristine} title={'Save'} />
+                            ) : (
+                                <Button onPress={() => setUpdateForm(true)} title={'Edit'} />
+                            )}
                         </View>
                     );
                 }}

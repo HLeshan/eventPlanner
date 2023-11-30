@@ -14,11 +14,9 @@ import H1 from '~/components/headings/H1';
 import H2 from '~/components/headings/H2';
 import PageContainer from '~/components/PageContainer';
 import useAppSettings from '~/models/AppSettings';
-import useAuthStore from '~/models/AuthStore';
 import {ROUTES} from '~/routes/types';
 import styles from './styles';
-import {checkNotificationPermission, getNotificationToken, onNotificationMessage} from '~/utils/FCMEvents';
-import {logInfo} from '~/utils/Logger';
+import {checkNotificationPermission, getNotificationToken, onNotificationMessage, userSignIn} from '~/utils/FCMEvents';
 import {navigate} from '~/utils/NavigationService';
 
 type AuthPayload = {
@@ -28,7 +26,6 @@ type AuthPayload = {
 
 export default function LoginPage() {
     const theme = useAppSettings(state => state.theme);
-    const setUserData = useAuthStore(state => state.setUserData);
 
     useEffect(() => {
         async function checkPermission() {
@@ -47,16 +44,7 @@ export default function LoginPage() {
     }, []);
 
     const onSubmit = async (values: AuthPayload) => {
-        logInfo(values);
-        setUserData({
-            firstName: 'test',
-            lastName: 'test',
-            email: 'test@ff.com',
-            mobile: '12 3456 7890',
-            address: 'test',
-            profile: 'https://www.corporatephotographerslondon.com/wp-content/uploads/2021/07/LinkedIn_profile_photo_sample_1-300x300.jpg',
-        });
-        navigate(ROUTES.IMAGE_UPLOAD);
+        await userSignIn(values.username, values.password);
     };
 
     return (

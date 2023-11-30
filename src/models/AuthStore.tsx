@@ -1,12 +1,12 @@
 import {create} from 'zustand';
 
 export interface UserData {
-    firstName: string;
-    lastName?: string;
+    firstName: string | null;
+    lastName: string | null;
     email: string;
-    mobile?: string;
-    address?: string;
-    profile?: string;
+    mobile: string | null;
+    address: string | null;
+    profile: string;
 }
 
 type AuthStore = {

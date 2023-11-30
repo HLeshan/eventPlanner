@@ -15,9 +15,11 @@ const styles = StyleSheet.create({
         marginBottom: 0,
     },
     buttonContainer: {
+        flex: 1,
         flexDirection: 'row',
         gap: 10,
         marginVertical: DEFAULT_APP_STYLES.PADDING * 2,
+        alignItems: 'flex-end',
     },
     buttonWrapper: {
         flex: 1,
